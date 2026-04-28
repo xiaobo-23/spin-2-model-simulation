@@ -22,10 +22,10 @@ end
 
 # S+: raises m -> m+1, with matrix elements sqrt(S(S+1) - m(m+1))
 function ITensors.op!(Op::ITensor, ::OpName"S+", ::SiteType"S=2", s::Index)
-    Op[s'=>1, s=>2] = 2.0               # |+2⟩⟨+1|
-    Op[s'=>2, s=>3] = sqrt(6.0)         # |+1⟩⟨0|
-    Op[s'=>3, s=>4] = sqrt(6.0)         # |0⟩⟨-1|
-    Op[s'=>4, s=>5] = 2.0               # |-1⟩⟨-2|
+    Op[s'=>1, s=>2] = 2.0                                        # |+2⟩⟨+1|
+    Op[s'=>2, s=>3] = sqrt(6.0)                                  # |+1⟩⟨0|
+    Op[s'=>3, s=>4] = sqrt(6.0)                                  # |0⟩⟨-1|
+    Op[s'=>4, s=>5] = 2.0                                        # |-1⟩⟨-2|
 end
 
 
