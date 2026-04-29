@@ -6,7 +6,7 @@ using ITensors, ITensorMPS
 
 
 include("parameters.jl")
-
+include("spintwo.jl")
 
 # ---------------------------------------------------------------------------
 # Initialize the MPS
@@ -22,6 +22,7 @@ include("parameters.jl")
 function initial_state(params::SimulationParameters; linkdims::Int = 10)
     Random.seed!(params.seed)
     sites = siteinds("S=2", params.N)
+    # ψ₀    = MPS(sites, "+2")
     ψ₀    = random_mps(sites, "+2"; linkdims = linkdims)
 
     sz₀ = expect(ψ₀, "Sz"; sites = 1:params.N)

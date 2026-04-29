@@ -79,8 +79,22 @@ end
 
 
 # Define states for product MPS construction
-ITensors.state(::StateName"+2", ::SiteType"S=2") = [1, 0, 0, 0, 0]
-ITensors.state(::StateName"+1", ::SiteType"S=2") = [0, 1, 0, 0, 0]
-ITensors.state(::StateName"0",  ::SiteType"S=2") = [0, 0, 1, 0, 0]
-ITensors.state(::StateName"-1", ::SiteType"S=2") = [0, 0, 0, 1, 0]
-ITensors.state(::StateName"-2", ::SiteType"S=2") = [0, 0, 0, 0, 1]
+ITensors.state(::StateName"+2", ::SiteType"S=2", s::Index) = 
+    itensor([1.0, 0.0, 0.0, 0.0, 0.0], s)
+ITensors.state(::StateName"+1", ::SiteType"S=2", s::Index) = 
+    itensor([0.0, 1.0, 0.0, 0.0, 0.0], s)
+ITensors.state(::StateName"0",  ::SiteType"S=2", s::Index) = 
+    itensor([0.0, 0.0, 1.0, 0.0, 0.0], s)
+ITensors.state(::StateName"-1", ::SiteType"S=2", s::Index) = 
+    itensor([0.0, 0.0, 0.0, 1.0, 0.0], s)
+ITensors.state(::StateName"-2", ::SiteType"S=2", s::Index) = 
+    itensor([0.0, 0.0, 0.0, 0.0, 1.0], s)
+
+
+let
+    s = siteind("S=2")
+    v = state(s, "+2")
+    @show typeof(v)              # should be ITensor — this won't trigger show on the contents
+    @show inds(v)                # prints the indices, not the tensor data
+    @show v[s=>1], v[s=>2]   
+end

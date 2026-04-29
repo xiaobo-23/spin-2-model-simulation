@@ -1,4 +1,4 @@
-# 4/28/2026s
+# 4/28/2026
 # Running DMRG simulation to obtain the ground-state wave function of spin-2 model on a 1D chain   
 
 using ITensors, ITensorMPS
