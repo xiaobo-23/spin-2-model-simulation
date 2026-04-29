@@ -31,15 +31,17 @@ let
     # Parameters
     # ---------------------------------------------------------------------------
     params = SimulationParameters(
-        N       = 10,
+        N       = 100,
         J₁      = 1.0,
-        J₂      = 0.0,
+        J₂      = 0.1799,
+        Dxy     = 0.0161,
+        Dz      = -0.0789,
         cutoff  = 1e-8,
         nsweeps = 20,
         maxdim  = [20, 50, 200, 1000],
         seed    = 1234
     )
-    @info "Simulation parameters" params.N params.J₁ params.J₂ params.cutoff params.nsweeps params.maxdim params.seed
+    @info "Simulation parameters" params.N params.J₁ params.J₂ params.Dxy params.Dz params.cutoff params.nsweeps params.maxdim params.seed
 
     
 
@@ -59,10 +61,12 @@ let
     # Running DMRG to obtain the ground-state wave function
     # ---------------------------------------------------------------------------
     println("\nStarting DMRG simulation...\n")
+    eigsolve_krylovdim = 50
     E, ψ = dmrg(Hamiltonian, ψ₀; 
                 maxdim  = params.maxdim,
                 cutoff  = params.cutoff,
-                nsweeps = params.nsweeps
+                nsweeps = params.nsweeps,
+                eigsolve_krylovdim = eigsolve_krylovdim = 50
     )
     
     
@@ -86,10 +90,14 @@ let
     # ---------------------------------------------------------------------------
     # Save results
     # ---------------------------------------------------------------------------
-    # output_filename = "data/heisenberg_input_n$(N).h5"
-    # h5open(output_filename, "w") do file
-    #     write(file, "Psi", ψ)
-    # end
+    output_filename = "data/heisenberg_input_n$(params.N).h5"
+    h5open(output_filename, "w") do file
+        write(file, "Psi", ψ)
+        write(file, "Sz", sz)
+        write(file, "Czz", czz)
+        write(file, "Energy", E)
+        write(file, "EnergyVariance", variance)
+    end
 
     return
 end

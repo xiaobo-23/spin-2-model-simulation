@@ -44,7 +44,7 @@ end
 function ITensors.op!(Op::ITensor, ::OpName"Sx", ::SiteType"S=2", s::Index)
     sp = op("S+", s)
     sm = op("S-", s)
-    Op .= 0.5 .* (sp .+ sm)
+    Op .= 0.5 * (sp + sm)
 end
 
 
@@ -53,7 +53,7 @@ end
 function ITensors.op!(Op::ITensor, ::OpName"Sy", ::SiteType"S=2", s::Index)
     sp = op("S+", s)
     sm = op("S-", s)
-    Op .= -0.5im .* (sp .- sm)
+    Op .= -0.5im * (sp - sm)
 end
 
 
@@ -91,10 +91,10 @@ ITensors.state(::StateName"-2", ::SiteType"S=2", s::Index) =
     itensor([0.0, 0.0, 0.0, 0.0, 1.0], s)
 
 
-let
-    s = siteind("S=2")
-    v = state(s, "+2")
-    @show typeof(v)              # should be ITensor — this won't trigger show on the contents
-    @show inds(v)                # prints the indices, not the tensor data
-    @show v[s=>1], v[s=>2]   
-end
+# let
+#     s = siteind("S=2")
+#     v = state(s, "+2")
+#     @show typeof(v)              # should be ITensor — this won't trigger show on the contents
+#     @show inds(v)                # prints the indices, not the tensor data
+#     @show v[s=>1], v[s=>2]   
+# end

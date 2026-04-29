@@ -33,14 +33,29 @@ function build_hamiltonian(parameters::SimulationParameters, sites)
         end
     end
 
-    # # Next-nearest-neighbor
-    # if !iszero(parameters.J₂)
-    #     for j in 1:(parameters.N - 2)
-    #         os += 0.5 * parameters.J₂, "S+", j, "S-", j + 2
-    #         os += 0.5 * parameters.J₂, "S-", j, "S+", j + 2
-    #         os +=       parameters.J₂, "Sz", j, "Sz", j + 2
-    #     end
-    # end
+    # Next-nearest-neighbor
+    if !iszero(parameters.J₂)
+        for j in 1:(parameters.N - 2)
+            os += 0.5 * parameters.J₂, "S+", j, "S-", j + 2
+            os += 0.5 * parameters.J₂, "S-", j, "S+", j + 2
+            os +=       parameters.J₂, "Sz", j, "Sz", j + 2
+        end
+    end
+
+    # Anisotropy in the XY plane perpendicular to the easy axis
+    if !iszero(parameters.Dxy)
+        for j in 1:parameters.N
+            os += 0.5 * parameters.Dxy, "Sy", j, "Sy", j
+            os += -0.5 * parameters.Dxy, "Sx", j, "Sx", j
+        end
+    end
+
+    # Easy-axis anisotropy
+    if !iszero(parameters.Dz)
+        for j in 1:parameters.N
+            os += parameters.Dz, "Sz", j, "Sz", j
+        end
+    end 
 
     return MPO(os, sites)
 end

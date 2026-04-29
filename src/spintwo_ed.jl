@@ -14,10 +14,10 @@ include("parameters.jl")
 """
     exact_diagonalization_sparse(params; sz_sector = 0) -> (E0, ψ0_vec, basis)
 
-Diagonalize H restricted to the total Sᶻ = `sz_sector` sector using sparse
-matrices and Lanczos. Returns the ground-state energy, the eigenvector in
-the restricted basis, and the basis itself (as integer-encoded states) so
-you can interpret the vector if needed.
+    Diagonalize H restricted to the total Sᶻ = `sz_sector` sector using sparse
+    matrices and Lanczos. Returns the ground-state energy, the eigenvector in
+    the restricted basis, and the basis itself (as integer-encoded states) so
+    you can interpret the vector if needed.
 """
 
 function exact_diagonalization_sparse(params::SimulationParameters;
