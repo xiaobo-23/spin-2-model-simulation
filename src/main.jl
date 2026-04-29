@@ -4,11 +4,11 @@
 using ITensors, ITensorMPS
 using LinearAlgebra
 using HDF5
-using Random
-using Printf
+using Random, Printf
 
 include("spintwo.jl")
 include("parameters.jl")
+include("initialization.jl")
 include("hamiltonian.jl")
 
 
@@ -44,23 +44,20 @@ let
     
 
     # ---------------------------------------------------------------------------
-    # Initial state
+    # Set up the initial state as an MPS
     # ---------------------------------------------------------------------------
-    Random.seed!(params.seed)
-    sites = siteinds("S=2", params.N)
-    ψ₀ = random_mps(sites, "+2"; linkdims=10)
-    sz₀ = expect(ψ₀, "Sz"; sites=1:params.N)
-    @info "Initial ⟨Sᶻ⟩ profile" sz₀
-
+    sites, ψ₀ = initial_state(params; linkdims=10)
 
     
     # ---------------------------------------------------------------------------
-    # Hamiltonian and DMRG
+    # Set up the Hamiltonian as an MPO
     # ---------------------------------------------------------------------------
     Hamiltonian = build_hamiltonian(params, sites)  
     
 
-    # Perform DMRG simulation to obtain the ground state
+    # ---------------------------------------------------------------------------
+    # Running DMRG to obtain the ground-state wave function
+    # ---------------------------------------------------------------------------
     println("\nStarting DMRG simulation...\n")
     E, ψ = dmrg(Hamiltonian, ψ₀; 
                 maxdim  = params.maxdim,
@@ -68,10 +65,9 @@ let
                 nsweeps = params.nsweeps
     )
     
-
     
     # ---------------------------------------------------------------------------
-    # Observables
+    # Measure observables and check energy variance
     # ---------------------------------------------------------------------------
     sz  = expect(ψ, "Sz"; sites=1:params.N)
     czz  = correlation_matrix(ψ, "Sz", "Sz"; sites=1:params.N)
