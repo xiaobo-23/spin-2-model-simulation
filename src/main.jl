@@ -7,8 +7,8 @@ using HDF5
 using Random
 using Printf
 
-
 include("spintwo.jl")
+include("hamiltonian.jl")
 
 
 # ---------------------------------------------------------------------------
@@ -31,7 +31,6 @@ BLAS.set_num_threads(8)
     - `N::Int`           : number of sites.
     - `J₁::Float64`      : nearest-neighbor coupling.
     - `J₂::Float64`      : next-nearest-neighbor coupling.
-    - `Δ::Float64`       : nearest-neighbor dimerization (alternates sign on bonds).
     - `cutoff::Float64`  : truncation cutoff for DMRG.
     - `nsweeps::Int`     : number of DMRG sweeps.
     - `maxdim::Vector{Int}` : max bond dimension schedule across sweeps.
@@ -55,59 +54,6 @@ Base.@kwdef struct SimulationParameters
         return new(N, J₁, J₂, cutoff, nsweeps, maxdim, seed)
     end
 end
-
-
-
-# ---------------------------------------------------------------------------
-# Hamiltonian construction
-# ---------------------------------------------------------------------------
-"""
-    build_hamiltonian(p, sites) -> MPO
-
-    Construct the spin-2 J₁–J₂ Hamiltonian with optional dimerization on the
-    nearest-neighbor bonds:
-
-        H = Σⱼ J₁ Sⱼ · Sⱼ₊₁  +  Σⱼ J₂ Sⱼ · Sⱼ₊₂
-
-    where `S · S = SᶻSᶻ + ½(S⁺S⁻ + S⁻S⁺)`.
-"""
-
-function build_hamiltonian(parameters::SimulationParameters, sites)
-    os = OpSum()
-
-    # Nearest-neighbor with dimerization
-    if !iszero(parameters.J₁)
-        for j in 1:(parameters.N - 1)
-            os += 0.5 * parameters.J₁, "S+", j, "S-", j + 1
-            os += 0.5 * parameters.J₁, "S-", j, "S+", j + 1
-            os +=       parameters.J₁, "Sz", j, "Sz", j + 1
-        end
-    end
-
-    # # Next-nearest-neighbor
-    # if !iszero(parameters.J₂)
-    #     for j in 1:(parameters.N - 2)
-    #         os += 0.5 * parameters.J₂, "S+", j, "S-", j + 2
-    #         os += 0.5 * parameters.J₂, "S-", j, "S+", j + 2
-    #         os +=       parameters.J₂, "Sz", j, "Sz", j + 2
-    #     end
-    # end
-
-    return MPO(os, sites)
-end
-
-
-
-# ---------------------------------------------------------------------------
-# Main DMRG driver
-# ---------------------------------------------------------------------------
-"""
-    run_dmrg(parameters::SimulationParameters) -> (energy, ψ, observables)
-
-    Run a DMRG ground-state search on the spin-2 chain with parameters `parameters`.
-    Returns the ground-state energy, the optimized MPS, and a NamedTuple of
-    observables (final ⟨Sᶻ⟩ profile, ⟨SᶻSᶻ⟩ correlation matrix, and energy variance).
-"""
 
 
 
