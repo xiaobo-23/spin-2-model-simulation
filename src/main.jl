@@ -21,23 +21,25 @@ BLAS.set_num_threads(8)
 
 
 let
-    header = repeat("#", 70)
+    header = repeat("#", 100)
     println(header)
-    println("\nRunning DMRG simulation to obtain the ground-state wave function of the spin-2 model on a 1D chain")
+    println("\nRunning DMRG simulation to obtain the ground-state wave function of the spin-2 model on a 1D chain\n")
     println(header)
 
-    
     # ---------------------------------------------------------------------------
     # Parameters
     # ---------------------------------------------------------------------------
     params = SimulationParameters(
-        N       = 100,
+        N       = 10,
         J₁      = 1.0,
-        J₂      = 0.1799,
-        Dxy     = 0.0161,
-        Dz      = -0.0789,
+        # J₂      = 0.1799,
+        # Dxy     = 0.0161,
+        # Dz      = -0.0789,
+        J₂      = 0.0,
+        Dxy     = 0.0,
+        Dz      = 0.0,
         cutoff  = 1e-8,
-        nsweeps = 20,
+        nsweeps = 10,
         maxdim  = [20, 50, 200, 1000],
         seed    = 1234
     )
@@ -87,17 +89,17 @@ let
     
    
     
-    # ---------------------------------------------------------------------------
-    # Save results
-    # ---------------------------------------------------------------------------
-    output_filename = "data/heisenberg_input_n$(params.N).h5"
-    h5open(output_filename, "w") do file
-        write(file, "Psi", ψ)
-        write(file, "Sz", sz)
-        write(file, "Czz", czz)
-        write(file, "Energy", E)
-        write(file, "EnergyVariance", variance)
-    end
+    # # ---------------------------------------------------------------------------
+    # # Save results
+    # # ---------------------------------------------------------------------------
+    # output_filename = "data/heisenberg_input_n$(params.N)_J2$(params.J₂).h5"
+    # h5open(output_filename, "w") do file
+    #     write(file, "Psi", ψ)
+    #     write(file, "Sz", sz)
+    #     write(file, "Czz", czz)
+    #     write(file, "Energy", E)
+    #     write(file, "EnergyVariance", variance)
+    # end
 
     return
 end
